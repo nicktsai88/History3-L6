@@ -517,10 +517,8 @@
             </div>
             
             <div class="avatar-selection">
-                <img src="images/avatar_boy1.png" class="avatar-option selected" onclick="selectAvatar('avatar_boy1.png', this)" title="書生">
-                <img src="images/avatar_boy2.png" class="avatar-option" onclick="selectAvatar('avatar_boy2.png', this)" title="武將">
-                <img src="images/avatar_girl1.png" class="avatar-option" onclick="selectAvatar('avatar_girl1.png', this)" title="格格">
-                <img src="images/avatar_girl2.png" class="avatar-option" onclick="selectAvatar('avatar_girl2.png', this)" title="女史">
+                <img src="images/Chris.png" class="avatar-option selected" onclick="selectAvatar('avatar_boy1.png', this)" title="書生">
+                <img src="images/Louis.png" class="avatar-option" onclick="selectAvatar('avatar_boy2.png', this)" title="武將">
             </div>
 
             <div id="quick-login-area" class="quick-login-area"></div>
@@ -830,8 +828,7 @@
         function saveProgress(level, score) {
             let progress = getProgress();
             if (!progress.levelScores[level] || score > progress.levelScores[level]) progress.levelScores[level] = score;
-            // 修改過關分數為 70 分
-            if (score >= 70 && level === progress.maxLevel && level < LEVEL_CONFIG.length) progress.maxLevel++;
+            if (score >= 80 && level === progress.maxLevel && level < LEVEL_CONFIG.length) progress.maxLevel++;
             localStorage.setItem(getUserKey('quizProgress'), JSON.stringify(progress));
         }
 
@@ -861,8 +858,7 @@
                     let btn = document.createElement('button'); btn.className = 'level-btn';
                     if (levelNum <= progress.maxLevel) {
                         let bestScore = progress.levelScores[levelNum];
-                        // 修改分數判定為 70 分
-                        let icon = bestScore >= 70 ? '🚩' : '🏳️';
+                        let icon = bestScore >= 80 ? '🚩' : '🏳️';
                         if (bestScore === 100) icon = '👑'; else if (bestScore >= 90) icon = '⭐';
                         let scoreText = bestScore !== undefined ? `<div class="level-score">${bestScore}分</div>` : '<div class="level-score">出發</div>';
                         btn.innerHTML = `<div class="level-title">${icon} 第${levelNum}回</div>${scoreText}`;
@@ -1013,13 +1009,12 @@
             let finalScore = Math.round((score / currentQuizQuestions.length) * 100);
             document.getElementById('final-score').innerText = finalScore;
             document.getElementById('final-name').innerText = userName;
-            // 修改及格分數為 70 分
-            let comment = "", progress = getProgress(), isPass = finalScore >= 70;
+            let comment = "", progress = getProgress(), isPass = finalScore >= 80;
             
             if(finalScore === 100) comment = "🏆 狀元及第！無人能出其右！"; 
             else if(finalScore >= 90) comment = "🌟 榜眼之才！名列前茅！"; 
-            else if(finalScore >= 70) comment = "🎉 進士出身！恭喜過關！"; 
-            else comment = "💪 尚需努力！七十分方能晉級！";
+            else if(finalScore >= 80) comment = "🎉 進士出身！恭喜過關！"; 
+            else comment = "💪 尚需努力！八十分方能晉級！";
             
             document.getElementById('score-comment').innerText = comment;
             let unlockMsg = document.getElementById('unlock-msg');
@@ -1028,10 +1023,9 @@
 
             // 只有在「闖關模式」下才進行解鎖判定，錯題與最愛模式不影響進度
             if (!isMistakeMode && !isFavoriteMode && isPass) {
-                // 修改卡片獲得分數為 70 分
-                if (finalScore >= 70) {
+                if (finalScore >= 80) {
                     let oldScore = progress.levelScores[currentLevel];
-                    if (oldScore === undefined || oldScore < 70) {
+                    if (oldScore === undefined || oldScore < 80) {
                         gotNewCard = true;
                     }
                 }
@@ -1069,8 +1063,7 @@
             const progress = getProgress();
             for (let i = 1; i <= LEVEL_CONFIG.length; i++) {
                 let bestScore = progress.levelScores[i];
-                // 修改卡片解鎖分數為 70 分
-                let isUnlocked = (bestScore !== undefined && bestScore >= 70);
+                let isUnlocked = (bestScore !== undefined && bestScore >= 80);
                 let numStr = i < 10 ? `0${i}` : `${i}`;
                 let imgSrc = `images/card_${numStr}.jpg`;
                 let cardItem = document.createElement('div');
@@ -1147,8 +1140,7 @@
             else {
                 history.reverse().forEach(rec => {
                     let li = document.createElement('li');
-                    // 修改歷史紀錄的分數顏色判定為 70 分
-                    li.innerHTML = `<div class="history-info"><strong>${rec.mode}</strong> - <span style="color:${rec.score>=70?'#27AE60':'#C0392B'}">${rec.score}分</span><br><small style="color:gray">${rec.date}</small></div><div class="history-actions"><button class="btn btn-green btn-sm" onclick="replayHistory(${rec.id})">調閱</button><button class="btn btn-red btn-sm" onclick="deleteHistoryItem(${rec.id})">銷毀</button></div>`;
+                    li.innerHTML = `<div class="history-info"><strong>${rec.mode}</strong> - <span style="color:${rec.score>=80?'#27AE60':'#C0392B'}">${rec.score}分</span><br><small style="color:gray">${rec.date}</small></div><div class="history-actions"><button class="btn btn-green btn-sm" onclick="replayHistory(${rec.id})">調閱</button><button class="btn btn-red btn-sm" onclick="deleteHistoryItem(${rec.id})">銷毀</button></div>`;
                     list.appendChild(li);
                 });
             }
