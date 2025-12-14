@@ -517,10 +517,8 @@
             </div>
             
             <div class="avatar-selection">
-                <img src="images/avatar_boy1.png" class="avatar-option selected" onclick="selectAvatar('avatar_boy1.png', this)" title="書生">
-                <img src="images/avatar_boy2.png" class="avatar-option" onclick="selectAvatar('avatar_boy2.png', this)" title="武將">
-                <img src="images/avatar_girl1.png" class="avatar-option" onclick="selectAvatar('avatar_girl1.png', this)" title="格格">
-                <img src="images/avatar_girl2.png" class="avatar-option" onclick="selectAvatar('avatar_girl2.png', this)" title="女史">
+                <img src="images/Chris.png" class="avatar-option selected" onclick="selectAvatar('Chris.png', this)" title="Chris">
+                <img src="images/Louis.png" class="avatar-option" onclick="selectAvatar('Louis.png', this)" title="Louis">
             </div>
 
             <div id="quick-login-area" class="quick-login-area"></div>
@@ -647,8 +645,26 @@
         // 調整為適合大量題目的關卡配置 (每關20題，依題目量調整)
         const LEVEL_CONFIG = [20, 20, 20, 20, 20, 20, 20, 20];
         const ITEMS_PER_ROW = 4;
-        const PLAYLIST = ['sounds/Annie on the Dock.mp3', 'sounds/Castaways.mp3', 'sounds/Child in the Wind.mp3', 'sounds/Danny Boy.mp3', 'sounds/Jarrell's Cove.mp3', 'sounds/Promise on the Bluff.mp3', 'sounds/Talkes of the Harbormaster.mp3', 'sounds/Warn Rain.mp3'];
-        const TRACK_NAMES = ['BGM 1', 'BGM 2', 'BGM 3']; // 對應的曲目名稱
+        const PLAYLIST = [
+            'sounds/Annie on the Dock.mp3',
+            'sounds/Castaways.mp3',
+            'sounds/Child in the Wind.mp3',
+            'sounds/Danny Boy.mp3',
+            'sounds/Jarrell\'s Cove.mp3',
+            'sounds/Promise on the Bluff.mp3',
+            'sounds/Talkes of the Harbormaster.mp3',
+            'sounds/Warn Rain.mp3'
+        ];
+        const TRACK_NAMES = [
+            'Annie on the Dock',
+            'Castaways',
+            'Child in the Wind',
+            'Danny Boy',
+            'Jarrell\'s Cove',
+            'Promise on the Bluff',
+            'Talkes of the Harbormaster',
+            'Warn Rain'
+        ];
         
         // 播放模式: 0=全部循環, 1=單曲循環, 2=隨機播放
         const MODES = [
@@ -666,7 +682,7 @@
         
         let allQuestions = [], currentQuizQuestions = [], currentQuestionIndex = 0, score = 0;
         let userName = "", currentLevel = 1, userAnswers = {}, isMistakeMode = false, isFavoriteMode = false;
-        let currentAvatar = "avatar_boy1.png"; 
+        let currentAvatar = "Chris.png"; 
         
         let audioCorrect = new Audio('sounds/correct.mp3'); audioCorrect.volume = 0.4;
         let audioFail = new Audio('sounds/fail.mp3'); audioFail.volume = 0.4;
@@ -781,7 +797,7 @@
                 container.innerHTML = '<div style="width:100%; text-align:center; color:#8B4513; font-size:0.9em; margin-bottom:5px;">-- 舊雨重逢 (快速登入) --</div>';
                 users.forEach(userObj => {
                     let name = typeof userObj === 'string' ? userObj : userObj.name;
-                    let avatar = typeof userObj === 'string' ? 'avatar_boy1.png' : userObj.avatar;
+                    let avatar = typeof userObj === 'string' ? 'Chris.png' : userObj.avatar; // Default to Chris if old data
                     let div = document.createElement('div');
                     div.innerHTML = `<span class="user-tag" onclick="quickLogin('${name}', '${avatar}')"><img src="images/${avatar}" style="width:25px; height:25px; border-radius:50%; margin-right:5px; border:1px solid #8B4513;">${name}<span class="delete-user" onclick="event.stopPropagation(); deleteUser('${name}')">×</span></span>`;
                     container.appendChild(div);
