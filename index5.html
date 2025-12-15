@@ -63,8 +63,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            flex: 1; /* 左側佔比 */
-            min-width: 0; /* 防止縮小時爆版 */
+            flex: 1;
         }
 
         .player-icon {
@@ -78,7 +77,6 @@
             justify-content: center;
             color: var(--secondary-color);
             font-size: 1.2em;
-            flex-shrink: 0;
         }
 
         .track-info {
@@ -90,12 +88,11 @@
             text-overflow: ellipsis;
         }
 
-        /* 集中控制區 */
         .player-controls {
             display: flex;
             align-items: center;
-            gap: 12px;
-            flex: 3; /* 中央佔比較大 */
+            gap: 20px;
+            flex: 2;
             justify-content: center;
         }
 
@@ -104,7 +101,7 @@
             border: none;
             cursor: pointer;
             color: #555;
-            font-size: 1.4em;
+            font-size: 1.5em;
             transition: color 0.2s;
             padding: 5px;
             display: flex;
@@ -117,61 +114,36 @@
         }
 
         .play-pause-btn {
-            width: 42px;
-            height: 42px;
+            width: 45px;
+            height: 45px;
             background-color: #F0F0F0;
             border-radius: 50%;
-            font-size: 1.1em;
+            font-size: 1.2em;
             color: #333;
         }
         .play-pause-btn:hover {
             background-color: #E0E0E0;
-        }
-        
-        /* 音量控制區樣式 */
-        .volume-container {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin: 0 5px;
-        }
-        .volume-icon { font-size: 1.1em; color: #666; cursor: default; }
-        .volume-slider {
-            width: 70px;
-            cursor: pointer;
-            height: 4px;
-            border-radius: 2px;
-            accent-color: var(--primary-color); /* 設定滑桿顏色 */
         }
 
         .player-right {
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            flex: 1; /* 右側佔比 */
-        }
-        
-        /* 分隔線 */
-        .ctrl-separator {
-            width: 1px;
-            height: 20px;
-            background-color: #DDD;
-            margin: 0 2px;
+            flex: 1;
         }
 
         .mode-btn {
             display: flex;
             align-items: center;
             gap: 5px;
-            font-size: 0.85em;
+            font-size: 0.9em;
             background-color: #F9F9F9;
             border: 1px solid #CCC;
-            padding: 5px 10px;
+            padding: 5px 12px;
             border-radius: 20px;
             cursor: pointer;
             color: #666;
             transition: all 0.2s;
-            white-space: nowrap;
         }
         .mode-btn:hover {
             background-color: #EEE;
@@ -441,12 +413,7 @@
             /* 行動裝置調整 */
             .track-info { display: none; } /* 手機上隱藏曲名以節省空間 */
             #music-player-bar { padding: 0 10px; }
-            .player-controls { gap: 8px; }
-            .volume-slider { width: 50px; }
-            #mode-text { display: none; } /* 手機隱藏模式文字 */
-            .ctrl-separator { display: none; }
-            .player-right { display: none; } /* 手機上右側隱藏 */
-            .player-left { flex: 0.5; }
+            .player-controls { gap: 10px; }
         }
 
         /* --- 題目樣式 --- */
@@ -533,36 +500,17 @@
         </div>
         
         <div class="player-controls">
-            <!-- 上一首 -->
             <button class="ctrl-btn" onclick="prevTrack()" title="上一首">⏮</button>
-            
-            <!-- 播放/暫停 -->
             <button id="main-play-btn" class="ctrl-btn play-pause-btn" onclick="togglePlay()" title="播放/暫停">▶</button>
-            
-            <!-- 下一首 -->
             <button class="ctrl-btn" onclick="nextTrack()" title="下一首">⏭</button>
-            
-            <!-- 分隔線 -->
-            <div class="ctrl-separator"></div>
-
-            <!-- 音量控制 -->
-            <div class="volume-container" title="調整音量">
-                <span class="volume-icon">🔊</span>
-                <input type="range" id="volume-slider" class="volume-slider" min="0" max="1" step="0.05" value="0.3" oninput="setVolume(this.value)">
-            </div>
-            
-            <!-- 分隔線 -->
-            <div class="ctrl-separator"></div>
-
-            <!-- 模式切換 -->
+        </div>
+        
+        <div class="player-right">
             <button id="mode-btn" class="mode-btn" onclick="changeMode()" title="切換播放模式">
                 <span id="mode-icon">🔁</span>
                 <span id="mode-text">全部循環</span>
             </button>
         </div>
-        
-        <!-- 右側留白，保持平衡 -->
-        <div class="player-right"></div>
     </div>
 
     <div class="quiz-container">
@@ -793,11 +741,6 @@
                 isPlaying = false; 
                 updateMusicUI();
             }
-        }
-        
-        // 新增音量控制函數
-        function setVolume(val) {
-            bgmPlayer.volume = val;
         }
 
         function prevTrack() {
