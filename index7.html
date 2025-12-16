@@ -94,18 +94,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
         
-        /* 新增：透明遮罩層，阻擋所有對 iframe 的直接點擊 */
-        .yt-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: transparent;
-            z-index: 20; /* 確保在 iframe 之上 */
-            cursor: default;
-        }
-        
         /* 隱藏影片時的樣式 (只聽聲音) */
         #yt-wrapper.video-hidden {
             width: 0;
@@ -583,8 +571,6 @@
             <!-- YouTube 影片容器 -->
             <div id="yt-wrapper">
                 <div id="yt-player"></div>
-                <!-- 透明遮罩層，阻擋對影片的直接操作 -->
-                <div class="yt-overlay"></div>
             </div>
         </div>
         
