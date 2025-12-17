@@ -52,7 +52,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
-            justify-content: space-between; /* 左右分散對齊 */
+            justify-content: space-between;
             padding: 0 15px;
             box-sizing: border-box;
             z-index: 10000;
@@ -64,8 +64,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            flex: 1; /* 左側佔比 */
-            justify-content: flex-start;
+            flex: 1.2; /* 左側稍微寬一點放影片 */
         }
 
         .player-icon {
@@ -82,13 +81,9 @@
             flex-shrink: 0;
         }
 
-        /* YouTube 容器樣式 (桌面版：絕對定位置中) */
+        /* YouTube 容器樣式 */
         #yt-wrapper {
-            position: absolute; /* 絕對定位 */
-            left: 50%;          /* 水平置中 */
-            top: 50%;           /* 垂直置中 */
-            transform: translate(-50%, -50%); /* 修正置中偏移 */
-            
+            position: relative;
             width: 144px; /* 16:9 比例的小畫面 */
             height: 81px;
             background: #000;
@@ -97,10 +92,9 @@
             overflow: hidden;
             transition: all 0.3s ease;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            z-index: 5;
         }
         
-        /* 透明遮罩層，阻擋所有對 iframe 的直接點擊 */
+        /* 新增：透明遮罩層，阻擋所有對 iframe 的直接點擊 */
         .yt-overlay {
             position: absolute;
             top: 0;
@@ -126,20 +120,13 @@
             height: 100%;
         }
 
-        /* 右側區塊 (包含所有控制按鈕) */
-        .player-right {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            flex: 1; /* 右側佔比 */
-        }
-
-        /* 控制按鈕群組 */
+        /* 集中控制區 */
         .player-controls {
             display: flex;
             align-items: center;
             gap: 10px;
-            justify-content: flex-end;
+            flex: 2; 
+            justify-content: center;
         }
 
         .ctrl-btn {
@@ -193,6 +180,13 @@
             accent-color: var(--primary-color); 
         }
 
+        .player-right {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex: 1; 
+        }
+        
         .ctrl-separator {
             width: 1px;
             height: 20px;
@@ -485,15 +479,10 @@
             body { padding-top: 80px; } /* 手機上恢復較小的內距 */
             
             /* 手機上預設縮小/隱藏影片，避免佔位 */
-            /* 重置絕對定位，改為固定在右下角 */
             #yt-wrapper {
                 position: fixed;
                 bottom: 10px;
                 right: 10px;
-                top: auto;
-                left: auto;
-                transform: none;
-                
                 width: 120px;
                 height: 67px;
                 z-index: 10001; /* 浮動在最上層 */
@@ -507,8 +496,7 @@
             .volume-slider { width: 50px; }
             #mode-text { display: none; } /* 手機隱藏模式文字 */
             .ctrl-separator { display: none; }
-            /* 手機上右側顯示 */
-            .player-right { display: flex; flex: 1; justify-content: flex-end; } 
+            .player-right { display: none; } /* 手機上右側隱藏 */
             .player-left { flex: 0; margin-right: 5px;}
         }
 
@@ -590,55 +578,53 @@
 
     <!-- 頂部固定音樂播放器 -->
     <div id="music-player-bar">
-        <!-- 左側：僅顯示圖示 -->
         <div class="player-left">
             <div class="player-icon">📺</div>
-        </div>
-        
-        <!-- 中央：YouTube 影片容器 (絕對定位) -->
-        <div id="yt-wrapper">
-            <div id="yt-player"></div>
-            <!-- 透明遮罩層，阻擋對影片的直接操作 -->
-            <div class="yt-overlay"></div>
-        </div>
-        
-        <!-- 右側：控制按鈕群組 -->
-        <div class="player-right">
-            <div class="player-controls">
-                <!-- 上一首 -->
-                <button class="ctrl-btn" onclick="prevTrack()" title="上一首">⏮</button>
-                
-                <!-- 播放/暫停 -->
-                <button id="main-play-btn" class="ctrl-btn play-pause-btn" onclick="togglePlay()" title="播放/暫停">▶</button>
-                
-                <!-- 下一首 -->
-                <button class="ctrl-btn" onclick="nextTrack()" title="下一首">⏭</button>
-                
-                <!-- 分隔線 -->
-                <div class="ctrl-separator"></div>
-
-                <!-- 音量控制 -->
-                <div class="volume-container" title="調整音量">
-                    <span class="volume-icon">🔊</span>
-                    <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" step="5" value="30" oninput="setVolume(this.value)">
-                </div>
-                
-                 <!-- 分隔線 -->
-                 <div class="ctrl-separator"></div>
-
-                 <!-- 視覺開關 (眼睛) -->
-                 <button id="toggle-video-btn" class="ctrl-btn active" onclick="toggleVideoDisplay()" title="顯示/隱藏畫面">👁️</button>
-                
-                <!-- 分隔線 -->
-                <div class="ctrl-separator"></div>
-
-                <!-- 模式切換 -->
-                <button id="mode-btn" class="mode-btn" onclick="changeMode()" title="切換播放模式">
-                    <span id="mode-icon">🔁</span>
-                    <span id="mode-text">全部循環</span>
-                </button>
+            <!-- YouTube 影片容器 -->
+            <div id="yt-wrapper">
+                <div id="yt-player"></div>
+                <!-- 透明遮罩層，阻擋對影片的直接操作 -->
+                <div class="yt-overlay"></div>
             </div>
         </div>
+        
+        <div class="player-controls">
+            <!-- 上一首 -->
+            <button class="ctrl-btn" onclick="prevTrack()" title="上一首">⏮</button>
+            
+            <!-- 播放/暫停 -->
+            <button id="main-play-btn" class="ctrl-btn play-pause-btn" onclick="togglePlay()" title="播放/暫停">▶</button>
+            
+            <!-- 下一首 -->
+            <button class="ctrl-btn" onclick="nextTrack()" title="下一首">⏭</button>
+            
+            <!-- 分隔線 -->
+            <div class="ctrl-separator"></div>
+
+            <!-- 音量控制 -->
+            <div class="volume-container" title="調整音量">
+                <span class="volume-icon">🔊</span>
+                <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" step="5" value="30" oninput="setVolume(this.value)">
+            </div>
+            
+             <!-- 分隔線 -->
+             <div class="ctrl-separator"></div>
+
+             <!-- 視覺開關 (眼睛) -->
+             <button id="toggle-video-btn" class="ctrl-btn active" onclick="toggleVideoDisplay()" title="顯示/隱藏畫面">👁️</button>
+            
+            <!-- 分隔線 -->
+            <div class="ctrl-separator"></div>
+
+            <!-- 模式切換 -->
+            <button id="mode-btn" class="mode-btn" onclick="changeMode()" title="切換播放模式">
+                <span id="mode-icon">🔁</span>
+                <span id="mode-text">全部循環</span>
+            </button>
+        </div>
+        
+        <!-- 右側留白，保持平衡 -->
+        <div class="player-right"></div>
     </div>
 
     <div class="quiz-container">
@@ -789,7 +775,8 @@
         // YouTube 播放清單 (ID)
         // 目前只有一支影片，但未來可擴充
         const YOUTUBE_PLAYLIST = [
-            'aGZk0nEBWv4' 
+            'aGZk0nEBWv4', 
+            'WE1Jw0RKdX0'
         ];
         
         // 播放模式: 0=全部循環, 1=單曲循環, 2=隨機播放
