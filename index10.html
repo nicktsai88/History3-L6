@@ -850,8 +850,7 @@
             list.innerHTML = "";
             
             // Use stored order
-            // FIX: Use loose equality for filtering to match string IDs from storage with number IDs from JSON
-            const questions = allQuestions.filter(q => quizState.qIds.some(savedId => savedId == q.id));
+            const questions = allQuestions.filter(q => quizState.qIds.includes(q.id));
 
             questions.forEach((q, idx) => {
                 const card = document.createElement('div');
@@ -917,27 +916,17 @@
         }
 
         function handleWaterfallAnswer(qId, option) {
-            // FIX: 使用寬鬆比對 (==) 查找題目，因為 HTML 傳來的 qId 是字串，但 JSON 資料 ID 可能是數字
-            const qData = allQuestions.find(q => q.id == qId);
+            if(quizState.locked[qId]) return;
             
-            if (!qData) {
-                console.error("找不到題目 ID:", qId);
-                return;
-            }
-
-            // 使用原始 ID (保持型別一致)
-            const realId = qData.id;
-
-            if(quizState.locked[realId]) return;
-            
-            quizState.answers[realId] = option;
-            quizState.locked[realId] = true;
+            const qData = allQuestions.find(q => q.id === qId);
+            quizState.answers[qId] = option;
+            quizState.locked[qId] = true;
             
             const correct = qData.answer.substring(0,3);
             const selected = option.substring(0,3);
             
             // 取得卡片元素
-            const card = document.getElementById(`card-${realId}`);
+            const card = document.getElementById(`card-${qId}`);
 
             if(selected === correct) {
                 quizState.score++;
@@ -946,7 +935,7 @@
                 if(card) card.classList.add('card-correct'); // 立即變綠
             } else {
                 audioFail.play().catch(()=>{});
-                addToMistake(realId); // FIX: 傳入正確型別的 ID
+                addToMistake(qId);
                 if(card) card.classList.add('card-wrong'); // 立即變紅
             }
             
@@ -980,8 +969,7 @@
         // --- Common Logic (Favorites, Mistakes, History) ---
         function addToMistake(id) {
             let list = JSON.parse(localStorage.getItem(getUserKey('mistakeBank'))) || [];
-            // FIX: 使用寬鬆比對檢查是否存在，避免重複添加
-            if(!list.some(x => x == id)) {
+            if(!list.includes(id)) {
                 list.push(id);
                 localStorage.setItem(getUserKey('mistakeBank'), JSON.stringify(list));
                 updateDashboardTools();
@@ -990,24 +978,18 @@
 
         function isFavorite(id) {
             let list = JSON.parse(localStorage.getItem(getUserKey('favoriteBank'))) || [];
-            // FIX: 使用寬鬆比對
-            return list.some(x => x == id);
+            return list.includes(id);
         }
 
         function toggleWaterfallFav(btn, id) {
             let list = JSON.parse(localStorage.getItem(getUserKey('favoriteBank'))) || [];
-            // FIX: 轉換型別比對
-            if(list.some(x => x == id)) {
-                list = list.filter(x => x != id); // 寬鬆不等於
+            if(list.includes(id)) {
+                list = list.filter(x => x !== id);
                 btn.classList.remove('active');
                 // 修改點：取消收藏時，變回空心愛心 + 強制文字模式
                 btn.innerHTML = '♡&#xFE0E;';
             } else {
-                // 為了保持資料一致性，這裡最好轉換為數字，但如果 id 是混合型別...
-                // 嘗試轉為數字，如果不是 NaN 則存數字，否則存字串
-                let numericId = Number(id);
-                list.push(isNaN(numericId) ? id : numericId);
-                
+                list.push(id);
                 btn.classList.add('active');
                 // 修改點：收藏時，變為實心愛心 + 強制文字模式
                 btn.innerHTML = '♥&#xFE0E;';
@@ -1041,20 +1023,17 @@
             // Remove from list (Mistake or Favorite)
             if(quizState.mode === 'mistake') {
                 let list = JSON.parse(localStorage.getItem(getUserKey('mistakeBank'))) || [];
-                // FIX: 寬鬆不等於
-                list = list.filter(x => x != id);
+                list = list.filter(x => x !== id);
                 localStorage.setItem(getUserKey('mistakeBank'), JSON.stringify(list));
                 quizState.qIds = list;
             } else if (quizState.mode === 'favorite') {
                 let list = JSON.parse(localStorage.getItem(getUserKey('favoriteBank'))) || [];
-                // FIX: 寬鬆不等於
-                list = list.filter(x => x != id);
+                list = list.filter(x => x !== id);
                 localStorage.setItem(getUserKey('favoriteBank'), JSON.stringify(list));
                 quizState.qIds = list;
             }
 
             // Remove visual element
-            // FIX: Ensure finding element works regardless of id type
             const card = document.getElementById(`card-${id}`);
             if(card) card.remove();
             
@@ -1076,9 +1055,8 @@
             const id = currentQuizData[quizState.currentIndex].id;
             let list = JSON.parse(localStorage.getItem(getUserKey('favoriteBank'))) || [];
             
-            // FIX: 寬鬆比對
-            if(list.some(x => x == id)) {
-                list = list.filter(x => x != id);
+            if(list.includes(id)) {
+                list = list.filter(x => x !== id);
             } else {
                 list.push(id);
             }
@@ -1090,8 +1068,7 @@
         function updateStandardFavoriteUI(id) {
             let list = JSON.parse(localStorage.getItem(getUserKey('favoriteBank'))) || [];
             const btn = document.getElementById('std-fav-btn');
-            // FIX: 寬鬆比對
-            if(list.some(x => x == id)) {
+            if(list.includes(id)) {
                 btn.innerText = '★'; btn.style.background = 'var(--favorite-color)'; btn.style.color = 'white';
             } else {
                 btn.innerText = '☆'; btn.style.background = 'white'; btn.style.color = 'var(--favorite-color)';
